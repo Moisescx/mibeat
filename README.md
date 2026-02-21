@@ -1,17 +1,30 @@
-# reproductorw
+# MoiBeat 🎵
 
-A new Flutter project.
+Un reproductor de música offline moderno, rápido y con un diseño simple, construido desde cero con Flutter. 
 
-## Getting Started
+MoiBeat está diseñado para darte el control total de tu biblioteca local, priorizando una interfaz limpia y fluida por encima del desorden visual.
 
-This project is a starting point for a Flutter application.
+## ✨ Características Principales
 
-A few resources to get you started if this is your first Flutter project:
+* **Filtro Inteligente Anti-Basura:** Ignora automáticamente audios de menos de 60 segundos (adiós a las notas de voz de WhatsApp y sonidos del sistema).
+* **Búsqueda en Tiempo Real:** Encuentra cualquier canción o artista al instante con una barra de búsqueda integrada en la lista.
+* **Diseño Moderno y Fluido:** Tarjetas redondeadas, mini-reproductor flotante y fondos con gradientes adaptativos.
+* **Reproducción Continua:** Salto automático e inteligente a la siguiente pista al terminar una canción.
+* **Animación de Marquesina (Bouncing):** Los nombres largos de canciones o artistas se deslizan suavemente para que puedas leerlos completos sin arruinar el diseño.
+* **Soporte de Tema Oscuro/Claro:** Cambia el aspecto de toda la aplicación con un solo toque desde el panel de ajustes.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## 🚀 Cómo instalar (Solo para Android)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Ve a la sección de [Releases](../../releases) a la derecha de esta página.
+2. Descarga el archivo `app-release.apk` de la última versión disponible.
+3. Abre el archivo en tu teléfono Android. (Es posible que debas conceder permisos para "Instalar aplicaciones de origen desconocido").
+4. ¡Abre MoiBeat, dale permisos de lectura y disfruta tu música!
+
+## 🛠️ Tecnologías Usadas
+
+* **Framework:** [Flutter](https://flutter.dev/)
+* **Lenguaje:** Dart
+* **Audio Engine:** `just_audio` & `on_audio_query`
+
+---
+Desarrollado con ❤️ por **MM**.

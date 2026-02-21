@@ -26,7 +26,7 @@ class PantallaAjustes extends StatelessWidget {
                 subtitle: const Text('Cambiar entre tema claro y oscuro'),
                 secondary: Icon(esOscuro ? Icons.dark_mode : Icons.light_mode),
                 value: esOscuro,
-                activeColor: Colors.greenAccent,
+                activeThumbColor: Colors.greenAccent,
                 onChanged: (valor) {
                   // Cuando tocas el switch, cambiamos el interruptor global
                   notificadorTema.value = valor ? ThemeMode.dark : ThemeMode.light;

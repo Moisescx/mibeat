@@ -18,6 +18,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
   SongModel? _cancionActual;
   int _indiceActual = -1;
+  // NUEVO: Este notificador le gritará a la pantalla gigante cuando cambiemos de canción
+  final ValueNotifier<int> _notificadorIndice = ValueNotifier(-1);
   List<SongModel> _listaCanciones = [];
   // NUEVO: Guarda lo que el usuario escribe en la lupa
   String _textoBusqueda = "";
@@ -74,6 +76,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
       _indiceActual = index;
     });
 
+    _notificadorIndice.value = index;
+
     if (cancion.uri != null) {
       try {
         await _reproductor.setAudioSource(
@@ -91,199 +95,188 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor:
-          Colors.transparent, // Magia para poder ver nuestro propio gradiente
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          height:
-              MediaQuery.of(context).size.height *
-              0.95, // 95% de la pantalla (más alta)
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.grey[850]!, // Gris muy oscuro arriba
-                Colors.black, // Negro profundo abajo
-              ],
-            ),
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(40),
-            ), // Bordes súper curvos
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 16.0,
-            ),
-            child: Column(
-              children: [
-                // --- LA RAYITA DESLIZANTE SUPERIOR ---
-                Container(
-                  width: 45,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[600],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+        // Envolvemos todo en el escuchador que reacciona a nuestro notificador
+        return ValueListenableBuilder<int>(
+          valueListenable: _notificadorIndice,
+          builder: (context, indiceActualizado, child) {
+            // Si por alguna razón el índice es -1, no dibujamos nada
+            if (indiceActualizado == -1) return const SizedBox.shrink();
+
+            // Obtenemos la canción correcta basándonos en el nuevo índice en tiempo real
+            var cancionMostrar = _listaCanciones[indiceActualizado];
+
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.95,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.grey[850]!, Colors.black],
                 ),
-
-                // Spacer() reparte el espacio vacío de la pantalla automáticamente
-                const Spacer(),
-
-                // --- CARÁTULA FLOTANTE Y ADAPTATIVA ---
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.6),
-                        blurRadius: 40, // Sombra enorme para dar profundidad
-                        offset: const Offset(0, 20),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(40),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 45,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[600],
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: QueryArtworkWidget(
-                      id: _cancionActual!.id,
-                      type: ArtworkType.AUDIO,
-                      // Se adapta automáticamente al 80% del ancho de tu celular
-                      artworkWidth: MediaQuery.of(context).size.width * 0.8,
-                      artworkHeight: MediaQuery.of(context).size.width * 0.8,
-                      artworkBorder: BorderRadius.zero,
-                      size: 1000,
-                      quality: 100,
-                      nullArtworkWidget: Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        height: MediaQuery.of(context).size.width * 0.8,
-                        color: Colors.grey[900],
-                        child: const Icon(
-                          Icons.music_note,
-                          size: 100,
-                          color: Colors.grey,
+                    ),
+                    const Spacer(),
+
+                    // --- CARÁTULA FLOTANTE ---
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.6),
+                            blurRadius: 40,
+                            offset: const Offset(0, 20),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: QueryArtworkWidget(
+                          id: cancionMostrar
+                              .id, // ¡Usamos la canción actualizada!
+                          type: ArtworkType.AUDIO,
+                          artworkWidth: MediaQuery.of(context).size.width * 0.8,
+                          artworkHeight:
+                              MediaQuery.of(context).size.width * 0.8,
+                          artworkBorder: BorderRadius.zero,
+                          size: 1000,
+                          quality: 100,
+                          nullArtworkWidget: Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.width * 0.8,
+                            color: Colors.grey[900],
+                            child: const Icon(
+                              Icons.music_note,
+                              size: 100,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                    const Spacer(),
 
-                const Spacer(),
-
-                // --- TÍTULO Y ARTISTA ANIMADOS (Versión Relajada) ---
-                TextScroll(
-                  _cancionActual!.title,
-                  mode: TextScrollMode.bouncing,
-                  // 1. Bajamos la velocidad a la mitad (de 40 a 20)
-                  velocity: const Velocity(pixelsPerSecond: Offset(20, 0)),
-                  // 2. Espera 3 segundos antes de empezar la primera vez
-                  delayBefore: const Duration(seconds: 3),
-                  // 3. LA CLAVE: Espera 10 segundos completos antes de volver a moverse
-                  pauseBetween: const Duration(seconds: 10),
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                TextScroll(
-                  _cancionActual!.artist ?? "Artista desconocido",
-                  mode: TextScrollMode.bouncing,
-                  // El artista se mueve un poco más lento que el título (15)
-                  velocity: const Velocity(pixelsPerSecond: Offset(15, 0)),
-                  delayBefore: const Duration(seconds: 3),
-                  pauseBetween: const Duration(seconds: 10),
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.greenAccent,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 30),
-
-                // --- BARRA DE PROGRESO INTELIGENTE ---
-                BarraDeProgreso(reproductor: _reproductor),
-
-                const SizedBox(height: 20),
-
-                // --- BOTONES REDISEÑADOS ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.skip_previous_rounded),
-                      iconSize: 45,
-                      color: Colors.white,
-                      onPressed: () {
-                        _reproducirCancion(_indiceActual - 1);
-                        Navigator.pop(context);
-                        _mostrarPantallaReproduccion(context);
-                      },
+                    // --- TÍTULO Y ARTISTA ---
+                    TextScroll(
+                      cancionMostrar.title, // ¡Usamos la canción actualizada!
+                      mode: TextScrollMode.bouncing,
+                      velocity: const Velocity(pixelsPerSecond: Offset(20, 0)),
+                      delayBefore: const Duration(seconds: 3),
+                      pauseBetween: const Duration(seconds: 10),
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    TextScroll(
+                      cancionMostrar.artist ??
+                          "Artista desconocido", // ¡Usamos la canción actualizada!
+                      mode: TextScrollMode.bouncing,
+                      velocity: const Velocity(pixelsPerSecond: Offset(15, 0)),
+                      delayBefore: const Duration(seconds: 3),
+                      pauseBetween: const Duration(seconds: 10),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.greenAccent,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
 
-                    // --- EL BOTÓN DE PLAY HEROICO ---
-                    StreamBuilder<bool>(
-                      stream: _reproductor.playingStream,
-                      builder: (context, snapshot) {
-                        bool isPlaying = snapshot.data ?? false;
-                        return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.greenAccent,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.greenAccent.withOpacity(0.3),
-                                blurRadius:
-                                    20, // Resplandor verde al estilo neón
-                                offset: const Offset(0, 8),
+                    const SizedBox(height: 30),
+                    BarraDeProgreso(reproductor: _reproductor),
+                    const SizedBox(height: 20),
+
+                    // --- BOTONES ---
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.skip_previous_rounded),
+                          iconSize: 45,
+                          color: Colors.white,
+                          onPressed: () {
+                            _reproducirCancion(indiceActualizado - 1);
+                            // ¡Mira mamá, sin Navigator.pop!
+                          },
+                        ),
+
+                        StreamBuilder<bool>(
+                          stream: _reproductor.playingStream,
+                          builder: (context, snapshot) {
+                            bool isPlaying = snapshot.data ?? false;
+                            return Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.greenAccent,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.greenAccent.withOpacity(0.3),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: IconButton(
-                            padding: const EdgeInsets.all(
-                              16,
-                            ), // Botón más gordo
-                            icon: Icon(
-                              isPlaying
-                                  ? Icons.pause_rounded
-                                  : Icons.play_arrow_rounded,
-                            ),
-                            iconSize: 45,
-                            color:
-                                Colors.black, // Ícono negro sobre fondo verde
-                            onPressed: () {
-                              if (isPlaying) {
-                                _reproductor.pause();
-                              } else {
-                                _reproductor.play();
-                              }
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                              child: IconButton(
+                                padding: const EdgeInsets.all(16),
+                                icon: Icon(
+                                  isPlaying
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                ),
+                                iconSize: 45,
+                                color: Colors.black,
+                                onPressed: () {
+                                  if (isPlaying) {
+                                    _reproductor.pause();
+                                  } else {
+                                    _reproductor.play();
+                                  }
+                                },
+                              ),
+                            );
+                          },
+                        ),
 
-                    IconButton(
-                      icon: const Icon(Icons.skip_next_rounded),
-                      iconSize: 45,
-                      color: Colors.white,
-                      onPressed: () {
-                        _reproducirCancion(_indiceActual + 1);
-                        Navigator.pop(context);
-                        _mostrarPantallaReproduccion(context);
-                      },
+                        IconButton(
+                          icon: const Icon(Icons.skip_next_rounded),
+                          iconSize: 45,
+                          color: Colors.white,
+                          onPressed: () {
+                            _reproducirCancion(indiceActualizado + 1);
+                            // ¡Mira mamá, sin Navigator.pop!
+                          },
+                        ),
+                      ],
                     ),
+                    const Spacer(),
                   ],
                 ),
-
-                const Spacer(), // Empuja todo suavemente para no quedar pegado al borde inferior
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

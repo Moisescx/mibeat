@@ -2,7 +2,7 @@
 
 Un reproductor de música offline moderno, rápido y con un diseño simple, construido desde cero con Flutter. 
 
-MoiBeat está diseñado para darte el control total de tu biblioteca local, priorizando una interfaz limpia y fluida por encima del desorden visual.
+MiBeat está diseñado para darte el control total de tu biblioteca local, priorizando una interfaz limpia y fluida por encima del desorden visual.
 
 ## ✨ Características Principales
 

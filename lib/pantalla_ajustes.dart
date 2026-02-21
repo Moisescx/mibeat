@@ -44,7 +44,7 @@ class PantallaAjustes extends StatelessWidget {
             child: Column(
               children: [
                 const Text(
-                  'MoiBeat v1.0.0',
+                  'MiBeat v1.0.0',
                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
                 ),
                 const SizedBox(height: 5),

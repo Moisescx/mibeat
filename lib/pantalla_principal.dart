@@ -286,7 +286,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MoiBeat'),
+        title: const Text('MiBeat'),
         elevation: 0,
         actions: [
           IconButton(

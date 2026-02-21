@@ -1,4 +1,4 @@
-# MoiBeat 🎵
+# MiBeat 🎵
 
 Un reproductor de música offline moderno, rápido y con un diseño simple, construido desde cero con Flutter. 
 

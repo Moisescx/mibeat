@@ -18,7 +18,7 @@ class MoiBeatApp extends StatelessWidget {
       valueListenable: notificadorTema,
       builder: (context, modoActual, child) {
         return MaterialApp(
-          title: 'MoiBeat',
+          title: 'MiBeat',
           debugShowCheckedModeBanner: false,
           theme: ThemeData.light(), // El diseño para el Modo Claro
           darkTheme: ThemeData.dark(), // El diseño para el Modo Oscuro

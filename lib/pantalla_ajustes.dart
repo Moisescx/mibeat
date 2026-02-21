@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main.dart'; 
+import 'theme_notifier.dart';
 
 class PantallaAjustes extends StatelessWidget {
   const PantallaAjustes({super.key});

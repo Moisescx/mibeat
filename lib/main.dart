@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pantalla_principal.dart';
-
-final ValueNotifier<ThemeMode> notificadorTema = ValueNotifier(ThemeMode.dark);
+import 'theme_notifier.dart';
 
 void main() {
   runApp(const MoiBeatApp());

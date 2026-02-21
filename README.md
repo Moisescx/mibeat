@@ -18,7 +18,7 @@ MiBeat está diseñado para darte el control total de tu biblioteca local, prior
 1. Ve a la sección de [Releases](../../releases) a la derecha de esta página.
 2. Descarga el archivo `app-release.apk` de la última versión disponible.
 3. Abre el archivo en tu teléfono Android. (Es posible que debas conceder permisos para "Instalar aplicaciones de origen desconocido").
-4. ¡Abre MoiBeat, dale permisos de lectura y disfruta tu música!
+4. ¡Abre MiBeat, dale permisos de lectura y disfruta tu música!
 
 ## 🛠️ Tecnologías Usadas
 

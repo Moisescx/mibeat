@@ -4,8 +4,6 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:text_scroll/text_scroll.dart';
 import 'progress_bar.dart';
-import 'equalizer_widget.dart';
-import '../services/equalizer_service.dart';
 
 class PlayerSheet extends StatefulWidget {
   final SongModel cancionMostrar;
@@ -34,22 +32,13 @@ class PlayerSheet extends StatefulWidget {
 }
 
 class _PlayerSheetState extends State<PlayerSheet> {
-  bool _mostrarEcualizador = false;
-
   @override
   void initState() {
     super.initState();
-    _inicializarEcualizador();
-  }
-
-  Future<void> _inicializarEcualizador() async {
-    await EqualizerService.initialize(widget.reproductor);
-    await EqualizerService.loadSavedPreferences();
   }
 
   @override
   void dispose() {
-    EqualizerService.release();
     super.dispose();
   }
 
@@ -74,7 +63,7 @@ class _PlayerSheetState extends State<PlayerSheet> {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: _mostrarEcualizador ? _buildEqualizerView() : _buildPlayerView(),
+            child: _buildPlayerView(),
           ),
         );
       },
@@ -109,40 +98,6 @@ class _PlayerSheetState extends State<PlayerSheet> {
         const SizedBox(height: 10),
         _buildControlButtons(),
         const Spacer(),
-      ],
-    );
-  }
-
-  Widget _buildEqualizerView() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              color: Colors.white,
-              onPressed: () {
-                setState(() {
-                  _mostrarEcualizador = false;
-                });
-              },
-            ),
-            Text(
-              'Ecualizador',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(width: 40), // Para centrar el título
-          ],
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: EqualizerWidget(),
-          ),
-        ),
       ],
     );
   }
@@ -378,30 +333,8 @@ class _PlayerSheetState extends State<PlayerSheet> {
               _buildLoopButton(),
             ],
           ),
-          const SizedBox(height: 12),
-          // Fila adicional con ecualizador
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildEqualizerButton(),
-            ],
-          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildEqualizerButton() {
-    return IconButton(
-      icon: const Icon(Icons.equalizer_rounded),
-      iconSize: 24,
-      color: Colors.white70,
-      tooltip: 'Ecualizador',
-      onPressed: () {
-        setState(() {
-          _mostrarEcualizador = true;
-        });
-      },
     );
   }
 

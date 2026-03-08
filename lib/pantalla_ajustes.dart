@@ -4,6 +4,7 @@ import 'ventana_actualizacion.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
+import 'pantalla_ecualizador.dart';
 // import 'package:shared_preferences/shared_preferences.dart'; // SUSPENDIDO
 // import 'services/lyrics_service.dart'; // SUSPENDIDO
 // import 'services/genius_service.dart'; // SUSPENDIDO
@@ -41,7 +42,10 @@ class PantallaAjustes extends StatelessWidget {
           ),
 
           ListTile(
-            leading: Icon(Icons.update, color: Theme.of(context).colorScheme.onSurface),
+            leading: Icon(
+              Icons.update,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             title: Text(
               "Buscar actualizaciones",
               style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
@@ -50,6 +54,46 @@ class PantallaAjustes extends StatelessWidget {
               _buscarActualizacion(context);
             },
           ),
+
+          // --- BOTÓN DEL ECUALIZADOR ---
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.greenAccent.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.tune_rounded, color: Colors.greenAccent),
+            ),
+            title: const Text(
+              'Ecualizador',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: Text(
+              'Ajusta los bajos y agudos',
+              style: TextStyle(color: Colors.grey[500], fontSize: 13),
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.grey,
+              size: 16,
+            ),
+            onTap: () {
+              // Navegamos a la pantalla del ecualizador
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PantallaEcualizador(),
+                ),
+              );
+            },
+          ),
+
+          // Una línea divisoria sutil (opcional)
+          Divider(color: Colors.grey[800], indent: 20, endIndent: 20),
 
           const Divider(),
 
@@ -70,7 +114,6 @@ class PantallaAjustes extends StatelessWidget {
             },
           ),
           */
-
           const Spacer(),
 
           Padding(
@@ -81,14 +124,18 @@ class PantallaAjustes extends StatelessWidget {
                   'MiBeat v2.0.0',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   'Desarrollado con ❤️ por MM',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 12,
                   ),
                 ),
